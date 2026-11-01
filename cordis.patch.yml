@@ -1,0 +1,5 @@
+# dsh-preflight bundle patch: 插入体检插件自己这一行。
+# 它只注册只读的检查工具，不改任何插件的运行状态。
+- insert:
+    - id: dsh-preflight
+      name: dsh-preflight

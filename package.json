@@ -1,0 +1,73 @@
+{
+  "name": "dsh-preflight",
+  "version": "0.1.0",
+  "description": "Pre-install, post-install and pre-update checkup for DeepSeek Harness plugins: verifies dsh.bundle, engine/peer compatibility, native build needs and duplicate loader names before you install, classifies what is already installed, and grades update risk before you click update.",
+  "license": "MIT",
+  "author": "mouyu6508-hue",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./core": "./lib/core.js",
+    "./profile": "./lib/profile.js",
+    "./sources": "./lib/sources.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "dsh-preflight": "./bin/preflight.js"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "scan": "node bin/preflight.js inventory"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "preflight",
+    "compatibility",
+    "peer-dependencies",
+    "install-check",
+    "inventory",
+    "update-risk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mouyu6508-hue/dsh-preflight.git"
+  },
+  "homepage": "https://github.com/mouyu6508-hue/dsh-preflight#readme",
+  "bugs": {
+    "url": "https://github.com/mouyu6508-hue/dsh-preflight/issues"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "yaml": "^2.5.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=4.0.0",
+    "@deepseek-ai/dsh-tools": ">=0.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

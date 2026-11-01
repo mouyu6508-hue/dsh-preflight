@@ -1,0 +1,10 @@
+{
+  "name": "no-bundle-demo",
+  "version": "0.1.0",
+  "description": "只有前端半边、没有 dsh.bundle 的反例，用来验证预检会拦下它。",
+  "dsh": {
+    "client": {
+      "platform": "web"
+    }
+  }
+}
