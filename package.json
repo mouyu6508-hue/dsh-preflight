@@ -12,7 +12,8 @@
     "./profile": "./lib/profile.js",
     "./sources": "./lib/sources.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./client": "./client.js"
   },
   "bin": {
     "dsh-preflight": "./bin/preflight.js"
@@ -20,6 +21,7 @@
   "files": [
     "lib",
     "bin",
+    "client.js",
     "cordis.patch.yml",
     "README.md",
     "LICENSE"
@@ -50,6 +52,10 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": []
     }
   },
   "dependencies": {
