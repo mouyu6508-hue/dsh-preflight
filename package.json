@@ -55,7 +55,13 @@
     },
     "client": {
       "platform": "web",
-      "inject": []
+      "inject": [
+        "slots"
+      ],
+      "external": [
+        "react"
+      ],
+      "immediately": true
     }
   },
   "dependencies": {
