@@ -55,12 +55,7 @@
     },
     "client": {
       "platform": "web",
-      "inject": [
-        "slots"
-      ],
-      "external": [
-        "react"
-      ],
+      "inject": [],
       "immediately": true
     }
   },

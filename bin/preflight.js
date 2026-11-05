@@ -79,7 +79,14 @@ async function main() {
     const out = args.out ? path.resolve(args.out) : path.join(process.cwd(), 'dsh-preflight-report.html')
     fs.writeFileSync(out, renderHtml({ inventory: inv, updates: upd, generatedAt: new Date().toLocaleString('zh-CN') }), 'utf8')
     console.log(`已生成：${out}`)
-    if (!args.noOpen) spawn('cmd', ['/c', 'start', '', out], { detached: true, stdio: 'ignore' }).unref()
+    if (!args.noOpen) {
+      // 只在 Windows 上自动打开；其他平台打印路径
+      if (process.platform === 'win32') {
+        spawn('cmd', ['/c', 'start', '', out], { detached: true, stdio: 'ignore' }).unref()
+      } else {
+        console.log('用浏览器打开上面的路径即可查看')
+      }
+    }
     return
   }
 

@@ -5,11 +5,19 @@
  *   GET /api/dsh-preflight/inventory   分类清单
  *   GET /api/dsh-preflight/updates     更新与风险
  */
+// 浏览器半边探针：把阶段打到 host 的日志里，方便在没有 DevTools 时定位
+const ping = (stage, extra) => {
+  try {
+    fetch('/api/dsh-preflight/ping?stage=' + encodeURIComponent(stage) + '&extra=' + encodeURIComponent(extra || ''))
+  } catch { /* ignore */ }
+}
+
 window.__ModuleLoader__.load({
   id: 'dsh-preflight',
   factory: (require) => {
     const React = require('react')
     const h = React.createElement
+    ping('bundle-loaded')
 
     // ── 极简状态容器：按钮和面板共用 ──────────────────────────────
     const store = {
@@ -222,16 +230,54 @@ window.__ModuleLoader__.load({
         + (store.inventory ? ' ' + store.inventory.total : ''))
     }
 
+    // 探针：确认浏览器半边到底有没有被加载（DevTools 里看 window.__dshPreflight）
+    try {
+      window.__dshPreflight = 'loaded'
+      console.log('[dsh-preflight] client bundle loaded')
+    } catch { /* noop */ }
+
     return {
+      inject: ['slots'],
       apply(ctx) {
-        const slots = ctx.get('slots')
-        if (!slots) return
-        slots.inject('conversation.session.header.utilities', () =>
-          slots.register({ name: 'conversation.session.header.utilities', id: 'dsh-preflight-trigger', order: -5 }, Trigger),
-        )
-        slots.inject('shell.overlay', () =>
-          slots.register({ name: 'shell.overlay', id: 'dsh-preflight-panel', order: 20 }, Panel),
-        )
+        try {
+          window.__dshPreflight = 'apply'
+        } catch { /* noop */ }
+        ping('apply')
+        let slots
+        try {
+          slots = ctx.slots
+          if (slots) ping('via-ctx-slots')
+          if (!slots && ctx.get) {
+            slots = ctx.get('slots')
+            if (slots) ping('via-ctx-get')
+          }
+        } catch (e) {
+          ping('slots-error', String((e && e.message) || e))
+          return
+        }
+        if (!slots) {
+          ping('no-slots')
+          return
+        }
+        ping('slots-ok')
+        try {
+          slots.inject('conversation.session.header.utilities', () => {
+            ping('slot-header-ready')
+            return slots.register({ name: 'conversation.session.header.utilities', id: 'dsh-preflight-trigger', order: -5 }, Trigger)
+          })
+          slots.inject('conversation.composer.dock', () => {
+            ping('slot-dock-ready')
+            return slots.register({ name: 'conversation.composer.dock', id: 'dsh-preflight-dock', order: 5 }, () =>
+              h('div', { style: { display: 'flex', justifyContent: 'flex-end', padding: '2px 12px' } }, h(Trigger)),
+            )
+          })
+          slots.inject('shell.overlay', () =>
+            slots.register({ name: 'shell.overlay', id: 'dsh-preflight-panel', order: 20 }, Panel),
+          )
+          ping('injects-done')
+        } catch (e) {
+          ping('inject-error', String((e && e.message) || e))
+        }
       },
     }
   },
