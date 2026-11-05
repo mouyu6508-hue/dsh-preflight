@@ -1,6 +1,6 @@
 {
   "name": "dsh-preflight",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pre-install, post-install and pre-update checkup for DeepSeek Harness plugins: verifies dsh.bundle, engine/peer compatibility, native build needs and duplicate loader names before you install, classifies what is already installed, and grades update risk before you click update.",
   "license": "MIT",
   "author": "mouyu6508-hue",
