@@ -7,8 +7,12 @@
  *   dsh-preflight updates [--profile desktop] [--json]
  */
 
+import fs from 'node:fs'
+import path from 'node:path'
+import { spawn } from 'node:child_process'
 import { checkPlugin, inventory, updateRisks } from '../lib/report.js'
 import { listProfiles } from '../lib/profile.js'
+import { renderHtml } from '../lib/html.js'
 
 function parseArgs(argv) {
   const args = { _: [], json: false }
@@ -17,6 +21,9 @@ function parseArgs(argv) {
     if (a === '--json') args.json = true
     else if (a === '--profile') args.profile = argv[++i]
     else if (a === '--dir') args.dir = argv[++i]
+    else if (a === '--out') args.out = argv[++i]
+    else if (a === '--no-open') args.noOpen = true
+    else if (a === '--no-updates') args.noUpdates = true
     else if (a.startsWith('-')) throw new Error(`不认识的参数：${a}`)
     else args._.push(a)
   }
@@ -59,6 +66,20 @@ async function main() {
     if (inv.missing.length) {
       console.log(`\n⚠ 没在 node_modules 里找到（通常由宿主自带）：${inv.missing.join(', ')}`)
     }
+    return
+  }
+
+  if (cmd === 'report') {
+    const inv = inventory(profileOptions)
+    let upd = null
+    if (!args.noUpdates) {
+      console.log('正在检查更新…')
+      upd = await updateRisks(profileOptions)
+    }
+    const out = args.out ? path.resolve(args.out) : path.join(process.cwd(), 'dsh-preflight-report.html')
+    fs.writeFileSync(out, renderHtml({ inventory: inv, updates: upd, generatedAt: new Date().toLocaleString('zh-CN') }), 'utf8')
+    console.log(`已生成：${out}`)
+    if (!args.noOpen) spawn('cmd', ['/c', 'start', '', out], { detached: true, stdio: 'ignore' }).unref()
     return
   }
 
